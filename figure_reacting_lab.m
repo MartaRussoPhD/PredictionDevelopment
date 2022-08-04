@@ -35,6 +35,7 @@ adultSetg = [1 3:4 6 18 19];
 xOffset = median(age([adultSetb adultSetg]));
 
 tree = 1;
+subjsel = [NTb NTg adultSetb adultSetg]; %MR20220721
 
 for subj = [ASDb ASDg NTb NTg adultSetb adultSetg],
 
@@ -169,4 +170,51 @@ xlim([5 22])
 % SEM = std(AD)/sqrt(length(AD));               % Standard Error
 % ts = tinv([0.025  0.975],length(AD)-1);      % T-Score
 % CI = mean(AD) + ts*SEM; 
+
+
+%% MR20220802
+for ag = 8:2:12,
+    
+    group{ag} = Valid(Age(Valid)>=ag-1 & Age(Valid)<ag+1);
+    
+end
+%%
+stat = [];
+nsubj = length(subjsel);
+for isubj = 1:nsubj,
+    subj = subjsel(isubj);
+    
+%         B{subj} = median(M{subj}(M{subj}>0.15 & M{subj}<0.5),'omitnan')*1000;
+
+    Mselected = M{subj}(M{subj}>0.15 & M{subj}<0.5)*1000;
+    %     Mselected = M{subj}(M{subj}~=0 & abs(M{subj})<0.30)*1000*1.1;
+%         Gselected = G{subj}(M{subj}~=0 & abs(M{subj})<mean(abs(M{subj}(M{subj}~=0)))+3*std(abs(M{subj}(M{subj}~=0))));
+
+    nsel = length(Mselected);
+    
+    if ismember(subj,group{8})
+        groupsel = 8;
+    elseif ismember(subj,group{10})
+        groupsel = 10;
+    elseif ismember(subj,group{12})
+        groupsel = 12;
+    else
+        groupsel = 0;
+    end
+    
+    if isubj == 1
+        nrow = 0;
+    else
+    nrow = size(stat,1);
+    
+    end
+    stat([1:nsel]+nrow,:) = [abs(Mselected')  ones(nsel,1)*Age(subj) ones(nsel,1)*subj ones(nsel,1)*groupsel];
+    
+    
+end
+% end
+
+%%
+
+csvwrite(sprintf('mat_reacting_lab_data_for_stat.csv'),stat)
 

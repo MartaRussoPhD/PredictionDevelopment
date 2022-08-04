@@ -90,6 +90,7 @@ plot(x,yexp,'color',[160,82,45]/255,'linewidth',5)
 % hold on
 % plot(mAge,mRT,'r-','linewidth',3)
 
+subjsel = [ ]; %MR20220721
 
 W = 1;
 for a = [6:2:12],
@@ -108,7 +109,8 @@ for a = [6:2:12],
 
     AGEl(a) = AGE(a) - std(mERROR([SUBJ]),'omitnan')./sqrt(L(a)).*tsma(2);
     AGEu(a) = AGE(a) + std(mERROR([SUBJ]),'omitnan')./sqrt(L(a)).*tsma(2);
-    
+       group{a} = SUBJ; %MR20220802
+subjsel = [ subjsel SUBJ']; %MR20220721
     line([a a],[AGEu(a) AGEl(a)],'color','k','linewidth',3)
 end
 W = 2;
@@ -125,7 +127,8 @@ for a = 20,
     L(a) = length(mERROR(SUBJ));
     AGEl(a) = AGE(a) - std(mERROR([SUBJ]),'omitnan')./sqrt(L(a)).*tsma(2);
     AGEu(a) = AGE(a) + std(mERROR([SUBJ]),'omitnan')./sqrt(L(a)).*tsma(2);
-    
+       group{a} = SUBJ; %MR20220802
+subjsel = [ subjsel SUBJ']; %MR20220721
     line([a a],[AGEu(a) AGEl(a)],'color','k','linewidth',3)
 end
 
@@ -134,7 +137,7 @@ plot([6:2:12 20],AGE([6:2:12 20]),'ok','linewidth',3,'markersize',7,'markerfacec
 
 set(gca,'fontsize',24)
 xlabel('Age (yr)','fontweight','bold')
-% ylabel('Absolute Error (ms)')
+ylabel('Timing Error (ms)')
 xlim([5 22])
 ylim([0 140])
 % 
@@ -144,3 +147,48 @@ ylim([0 140])
 % set(gca,'fontsize',20)
 % xlabel('Age (yr)')
 
+
+%% MR20220802
+% for ag = 6:2:12,
+%     
+%     group{ag} = subjsel(Age(subjsel)>=ag-1 & Age(subjsel)<ag+1);
+%    
+% end
+
+%%
+stat = [];
+nsubj = length(subjsel);
+for isubj = 1:nsubj,
+    subj = subjsel(isubj);
+    Limit = mean(abs(M{subj}(M{subj}~=0)),'omitnan')+3*std(abs(M{subj}(M{subj}~=0)),'omitnan');
+%     Limit = 0.25;
+    Mselected = M{subj}(M{subj}~=0 & abs(M{subj})<Limit)*1000;
+
+    nsel = length(Mselected);
+    
+    if ismember(subj,group{6})
+        groupsel = 6;
+    elseif ismember(subj,group{8})
+        groupsel = 8;
+    elseif ismember(subj,group{10})
+        groupsel = 10;
+    elseif ismember(subj,group{12})
+        groupsel = 12;
+    else
+        groupsel = 0;
+    end
+    
+    if isubj == 1
+        nrow = 0;
+    else
+    nrow = size(stat,1);
+    
+    end
+    stat([1:nsel]+nrow,:) = [abs(Mselected) ones(nsel,1)*Age(subj) ones(nsel,1)*subj ones(nsel,1)*groupsel];
+    
+    
+end
+
+
+%%
+csvwrite(sprintf('mat_pausing_museum_children_data_for_stat.csv'),stat)

@@ -18,7 +18,7 @@ Female = find(Age>0 & Gender=='F'& (Hist_Mov=='N' & Hist_Psych=='N'))';
 figure
 
 tree = 4;
-
+M = R;
 for subj = [Male Female],
     
     B{subj} = median(R{subj}(R{subj}>0.15 & R{subj}<0.5),'omitnan');
@@ -93,6 +93,8 @@ plot(x,yexp,'color',[160 82 45]/255,'linewidth',5)
 AD = mERROR(Age>=18 & Age<22 & mERROR>0);
 meanAD = mean(AD);
 sdAD = std(AD);
+subjsel = [ ]; %MR20220721
+
 for a = [6:2:12],
 %     MALE = find(Age>a-W & Age<a+W & Gender=='M' & History_Mov=='N' & History_Psych=='N')';
 %     FEMALE = find(Age>a-W & Age<a+W & Gender=='F' & History_Mov=='N' & History_Psych=='N')';
@@ -110,7 +112,8 @@ for a = [6:2:12],
     AGEl(a) = AGE(a) - std(mERROR([SUBJ]),'omitnan')./sqrt(length([SUBJ])).*tsma(2);
     AGEu(a) = AGE(a) + std(mERROR([SUBJ]),'omitnan')./sqrt(length([SUBJ])).*tsma(2);
     line([a a],[AGEu(a) AGEl(a)],'color','k','linewidth',3,'markersize',10)
-
+  group{a} = SUBJ; %MR20220802
+subjsel = [ subjsel SUBJ']; %MR20220721
 end
 
 W = 2;
@@ -128,7 +131,8 @@ for a = 20,
     AGEl(a) = AGE(a) - std(mERROR([SUBJ]),'omitnan')./sqrt(length([SUBJ])).*tsma(2);
     AGEu(a) = AGE(a) + std(mERROR([SUBJ]),'omitnan')./sqrt(length([SUBJ])).*tsma(2);
     line([a a],[AGEu(a) AGEl(a)],'color','k','linewidth',3)
-
+  group{a} = SUBJ; %MR20220802
+subjsel = [ subjsel SUBJ']; %MR20220721
 end
 plot([6:2:13 20],AGE([6:2:13 20]),'ok','linewidth',3,'markersize',7,'markerfacecolor',[0 0 0])
 
@@ -141,3 +145,46 @@ xlabel('Age (yr)','fontweight','bold')
 ylim([150 400])
 
 xlim([5 22])
+%% MR20220802
+% for ag = 6:2:12,
+%     
+%     group{ag} = subjsel(Age(subjsel)>=ag-1 & Age(subjsel)<ag+1);
+%    
+% end
+
+%%
+stat = [];
+nsubj = length(subjsel);
+for isubj = 1:nsubj,
+    subj = subjsel(isubj);
+   
+    Mselected = M{subj}(M{subj}>0.15 & M{subj}<0.5)*1000;
+   
+    nsel = length(Mselected);
+    
+    if ismember(subj,group{6})
+        groupsel = 6;
+    elseif ismember(subj,group{8})
+        groupsel = 8;
+    elseif ismember(subj,group{10})
+        groupsel = 10;
+    elseif ismember(subj,group{12})
+        groupsel = 12;
+    else
+        groupsel = 0;
+    end
+    
+    if isubj == 1
+        nrow = 0;
+    else
+    nrow = size(stat,1);
+    
+    end
+    stat([1:nsel]+nrow,:) = [abs(Mselected') ones(nsel,1)*Age(subj) ones(nsel,1)*subj ones(nsel,1)*groupsel];
+    
+    
+end
+
+
+%%
+csvwrite(sprintf('mat_reacting_museum_children_data_for_stat.csv'),stat)

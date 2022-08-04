@@ -82,6 +82,7 @@ for a = 5:10:35,
 %     line([xax(x)+0.4 xax(x)+0.4],[AGElF(a) AGEuF(a)],'color',[1 0 0],'linewidth',3)
 
     line([xax(x) xax(x)],[AGEl(a) AGEu(a)],'color',[1 1 1]*0,'linewidth',3)
+        group{a} = SUBJ; %MR20220802
 
     
 end
@@ -109,3 +110,53 @@ xlim([0 100])
 
 ylim([0 120])
 set(gca,'ytick',0:20:100)
+
+%% MR 20220802
+
+% for ag = 5:10:35,
+%     
+%     group{ag} = subjsel(Age(subjsel)>=ag-W & Age(subjsel)<ag+W);
+%     
+% end
+
+
+%%
+stat = [];
+nsubj = length(subjsel);
+for isubj = 1:nsubj,
+    subj = subjsel(isubj);
+    if not(isempty(M{subj}))
+    Mselected = M{subj};%(M{subj}~=0 & abs(M{subj})<mean(abs(M{subj}(M{subj}~=0)))+3*std(abs(M{subj}(M{subj}~=0))))*1000*1.1;
+    %     Mselected = M{subj}(M{subj}~=0 & abs(M{subj})<0.30)*1000*1.1;
+        Gselected = G{subj};%(M{subj}~=0 & abs(M{subj})<mean(abs(M{subj}(M{subj}~=0)))+3*std(abs(M{subj}(M{subj}~=0))));
+
+    nsel = length(Mselected);
+    
+    if ismember(subj,group{5})
+        groupsel = 5;
+    elseif ismember(subj,group{15})
+        groupsel = 15;
+    elseif ismember(subj,group{25})
+        groupsel = 25;
+        elseif ismember(subj,group{35})
+        groupsel = 35;
+    else
+        groupsel = 0;
+    end
+    
+    if isubj == 1
+        nrow = 0;
+    else
+    nrow = size(stat,1);
+    
+    end
+    stat([1:nsel]+nrow,:) = [abs(Mselected) Gselected ones(nsel,1)*Age(subj) ones(nsel,1)*subj ones(nsel,1)*groupsel];
+    
+    end
+end
+% end
+
+%%
+
+csvwrite(sprintf('mat_choosing_museum_all_data_for_stat.csv'),stat)
+
