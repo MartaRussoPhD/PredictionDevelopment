@@ -86,10 +86,10 @@ plot(x,yexp,'color',[160,82,45]/255,'linewidth',5)
 
 
 W = 1;
-ag = 6:2:12;
+ag = 6:2:16;
 subjsel = []; %MR20220721
 
-for a = 6:2:12,
+for a = 6:2:16,
 %     MALE = find(Age>a-W & Age<a+W & Gender=='M' & History_Mov=='N' & History_Psych=='N')';
 %     FEMALE = find(Age>a-W & Age<a+W & Gender=='F' & History_Mov=='N' & History_Psych=='N')';
     SUBJ = find(Age>=a-W & Age<a+W & mERROR>0);
@@ -166,7 +166,7 @@ for isubj = 1:nsubj,
 
     nsel = length(Mselected);
     
-    if ismember(subj,group{6})
+     if ismember(subj,group{6})
         groupsel = 6;
     elseif ismember(subj,group{8})
         groupsel = 8;
@@ -174,6 +174,10 @@ for isubj = 1:nsubj,
         groupsel = 10;
     elseif ismember(subj,group{12})
         groupsel = 12;
+         elseif ismember(subj,group{14})
+        groupsel = 14;
+         elseif ismember(subj,group{16})
+        groupsel = 16;
     else
         groupsel = 0;
     end

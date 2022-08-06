@@ -1,26 +1,20 @@
-% This script is to create figure for Catching results from individual data
+% This script is to create figure for BOuncing results from individual data
 % collected from the Museum of Science Boston.
 % Written by Se-Woong Park
-% catching_MoS_new.mat and AgeGender449.mat should be in the same folder.
+% bouncing_museum_449.mat and AgeGender449.mat should be in the same folder.
+load bouncing_museum_449.mat E
+% lblue = [102 178 255]/255;
+% lred = [255 153 153]/255;
+
 colorLab = [0 53 200]./255;
 colorMuseum = [0 171 240]./255;
 lblue = colorMuseum;
 lred = colorMuseum;
-load catching_MoS_new G M
-% M = TC;
+
 load AgeGender449.mat
-%load Survey_318 Age Gender Hist*
-
-Male = find(Age>0 & Age<130 & Gender=='M' & Hist_Mov=='N' & Hist_Psych=='N')';
-% Male = find(Age>0 & Age<130 & Gender=='M')';
-Female = find(Age>0 & Age<130 & Gender=='F' & Hist_Mov=='N' & Hist_Psych=='N')';
-% Female = find(Age>0 & Age<130 & Gender=='F')';
-%M = E;
 figure
-% subjsel = [Male Female]; %MR20220721
-
-for tree = 4,
-
+Male = find(Age>0 & Age<130 & Gender=='M' & Hist_Mov=='N' & Hist_Psych=='N')';
+Female = find(Age>0 & Age<130 & Gender=='F' & Hist_Mov=='N' & Hist_Psych=='N')';
 
 for subj = [Male Female],
     %B{subj} = abs(median(M{subj}(M{subj}>0.15),'omitnan'));
@@ -28,71 +22,73 @@ for subj = [Male Female],
     %B{subj} = median(abs(M{subj}(G{subj}==3 & M{subj}>0)),'omitnan');
     %B{subj} = median(abs(M{subj}(G{subj}'==tree & M{subj}~=0)),'omitnan');
     %B{subj} = median(abs(M{subj}(G{subj}==tree & M{subj}~=0)),'omitnan');
+    Eselected = E{subj}(E{subj}~=0 & abs(E{subj})<mean(abs(E{subj}(E{subj}~=0)))+3*std(abs(E{subj}(E{subj}~=0))));
 
-    %B{subj} = std(M{subj}(M{subj}~=0),'omitnan');
-    %B{subj} = size(M{subj},2)/60;
-%     B{subj} = mean(M{subj});
+    %B{subj} = median(abs(E{subj}(E{subj}~=0)),'omitnan');
+%     B{subj} = length(E{subj})/L{subj};
+    %B{subj} = size(R{subj},2)/20;
+    %B{subj} = median(abs(M{subj}));
+%     M{subj} = I{subj} - R{subj};
+%     B{subj} = mean(M{subj}(M{subj}~=0));
+
 %     B{subj} = median(MT{subj}(M{subj}>0.15 & M{subj}<0.5),'omitnan');
 %     B{subj} = median(M{subj}(M{subj}>0.15 & M{subj}<0.5),'omitnan');
-    %Mselected = P{subj}(G{subj}==tree & M{subj}~=0 & abs(M{subj})<0.15)*1000*1.1;
-    Mselected = M{subj}(M{subj}~=0 & abs(M{subj})<mean(abs(M{subj}(M{subj}~=0)))+3*std(abs(M{subj}(M{subj}~=0))));
-%     Mselected = M{subj}(M{subj}~=0 & abs(M{subj})<0.3);
-
-    if length(Mselected)>=3,
-        Tree(subj,1) = median(abs(Mselected),'omitnan');
-%         Tree(subj,1) = mean(abs(Mselected),'omitnan');
-    else
-%         Tree(subj,tree) = NaN;
-        Tree(subj,1) = NaN;
-    end
-    
-        
-%     B{subj} = median(abs(M{subj}(G{subj}<tree & M{subj}~=0)),'omitnan');
+%B{subj} = median(abs(M{subj}(G{subj}==tree & M{subj}~=0)),'omitnan');
+    %B{subj} = median(abs(M{subj}(G{subj}<tree & M{subj}~=0)),'omitnan');
     %B{subj} = median(abs(M{subj}(G{subj}<tree & M{subj}~=0)),'omitnan');
 
     %B{subj} = std(M{subj}(G{subj}<tree & M{subj}~=0),'omitnan');
     %plot(age(subj),abs(median(M{subj},'omitnan')),'o')
-%     plot(Age(subj),B{subj},'o','color',[0.9 0.447 0.041],'linewidth',2)
-%     hold on
+%     plot(age(subj),B{subj},'o','color',[0 0.447 0.741],'linewidth',2)
+    if length(Eselected)>=3,
+%         Tree(subj,tree) = median(abs(Mselected),'omitnan');
+        Bmat(subj) = median(abs(Eselected),'omitnan');
+    else
+%         Tree(subj,tree) = NaN;
+        Bmat(subj) = NaN;
+    end
+    hold on
 end
-% figure
-% plot(Age(Male),Tree(Male,tree),'o','color',[0 0.447 0.741],'linewidth',2)
-% 
-% set(gca,'fontsize',20)
-% xlabel('Age (yr)')
-% 
-% figure
-% plot(Age(Female),Tree(Female,tree),'o','color',[0.9 0.447 0.041],'linewidth',2)
-% 
-% set(gca,'fontsize',20)
-% xlabel('Age (yr)')
 
-end
-ERROR = Tree * 1000*1.1;
-
-mERROR = ERROR;
 hold on
-%patch([5 10 10 5],[0 0 160 160],[1 1 1]*0.9,'edgecolor','none')
+%patch([5 10 10 5],[0 0 350 350],[1 1 1]*0.9,'edgecolor','none')
 %patch([10 20 20 10],[0 0 160 160],[1 1 1]*0.8)
-%patch([20 30 30 20],[0 0 160 160],[1 1 1]*0.9,'edgecolor','none')
+%patch([20 30 30 20],[0 0 350 350],[1 1 1]*0.9,'edgecolor','none')
 
-p1 = plot(Age(Male),mERROR(Male),'o','color',lblue,'linewidth',2,'markersize',10,'markerfacecolor',lblue);
+W=1;
+oldest = 60;
+ERROR = Bmat'*1000*1.1;
+%& mERROR>0
+mERROR = ERROR;
+p1 = plot(Age(Male),mERROR(Male),'o','color',lblue,'linewidth',2,'markersize',10,'markerfacecolor',lblue)
 hold on
-p2 = plot(Age(Female),mERROR(Female),'o','color',lred,'linewidth',2,'markersize',10,'markerfacecolor',lred);
+p2 = plot(Age(Female),mERROR(Female),'o','color',lred,'linewidth',2,'markersize',10,'markerfacecolor',lred)
 % plot([5:10:55]-0.2,AGEM(5:10:55),'-','color',[0    0.4470    0.7410],'linewidth',3)
 % plot([5:10:55]+0.2,AGEF(5:10:55),'-','color',[0.8500    0.3250    0.0980],'linewidth',3)
 
 AD = mERROR(Age>=18 & Age<22 & mERROR>0);
 
-W = 5;
+% xax = [7.5 15 25 60];%MR20220721
+xax = [8 15 24 60];%MR20220721
 x = 0;
-xax = [7.5 15 25 60];
+W = 5;
 hold on
-for a = 5:10:35,
+
+subjsel = [ ]; %MR20220721
+ag = [5 15.5 24 35];%MR20220721
+% for a = 5:10:35,
+for a = ag,%MR20220721
     x = x + 1;
 %     MALE = find(Age>a-W & Age<a+W & Gender=='M' & History_Mov=='N' & History_Psych=='N')';
 %     FEMALE = find(Age>a-W & Age<a+W & Gender=='F' & History_Mov=='N' & History_Psych=='N')';
     if a<35,
+        if a < 15
+            W = 8;
+        elseif a < 24
+            W = 2.5;
+        elseif a < 35
+            W = 6;
+        end
         SUBJ = find(Age>=a-W & Age<a+W & mERROR>0 & Hist_Mov=='N' & Hist_Psych=='N');
         MALE = find(Gender == 'M' & Age>=a-W & Age<a+W & mERROR>0 & Hist_Mov=='N' & Hist_Psych=='N');
         FEMALE = find(Gender == 'F' & Age>=a-W & Age<a+W & mERROR>0 & Hist_Mov=='N' & Hist_Psych=='N');
@@ -122,16 +118,18 @@ tsmaF = tinv([0.025  0.975],length([FEMALE])-1);
     AGEuM(a) = AGEM(a) + std(mERROR([MALE]),'omitnan')./sqrt(length([MALE])).*tsmaM(2);
     AGElF(a) = AGEF(a) - std(mERROR([FEMALE]),'omitnan')./sqrt(length([FEMALE])).*tsmaF(2);
     AGEuF(a) = AGEF(a) + std(mERROR([FEMALE]),'omitnan')./sqrt(length([FEMALE])).*tsmaF(2);
-%     line([xax(x)-0.4 xax(x)-0.4],[AGElM(a) AGEuM(a)],'color',[0 0 1],'linewidth',3)
-%     line([xax(x)+0.4 xax(x)+0.4],[AGElF(a) AGEuF(a)],'color',[1 0 0],'linewidth',3)
     line([xax(x) xax(x)],[AGEl(a) AGEu(a)],'color',[0 0 0],'linewidth',3)
 
+%     line([xax(x)-0.4 xax(x)-0.4],[AGElM(a) AGEuM(a)],'color',[0 0 1],'linewidth',3)
+%     line([xax(x)+0.4 xax(x)+0.4],[AGElF(a) AGEuF(a)],'color',[1 0 0],'linewidth',3)
+group{a} = SUBJ; %MR20220802
+
+subjsel = [ subjsel SUBJ']; %MR20220721
 end
+p3 = plot([7.5 15 25 60],AGE(5:10:35),'-o','color',[0 0 0],'linewidth',3,'markersize',7,'markerfacecolor',[0 0 0])
 
-p3 = plot([7.5 15 25 60],AGE(5:10:35),'-o','color',[0 0 0],'linewidth',3,'markersize',7,'markerfacecolor',[0 0 0]);
-
-% p3 = plot([7.5 15 25 60]-0.4,AGEM(5:10:35),'-','color',[0 0 1],'linewidth',3);
-% p4 = plot([7.5 15 25 60]+0.4,AGEF(5:10:35),'-','color',[1 0 0],'linewidth',3);
+% p3 = plot([7.5 15 25 60]-0.4,AGEM(5:10:35),'-','color',[0 0 1],'linewidth',3)
+% p4 = plot([7.5 15 25 60]+0.4,AGEF(5:10:35),'-','color',[1 0 0],'linewidth',3)
 % legend([p1,p2,p3,p4],'Male','Female','Male','Female')
 
 % 
@@ -146,43 +144,45 @@ p3 = plot([7.5 15 25 60],AGE(5:10:35),'-o','color',[0 0 0],'linewidth',3,'marker
 % end
 % hold on
 % plot(mAge,mRT,'r-','linewidth',3)
-ylim([0 160])
 set(gca,'fontsize',24)
 xlabel('Age (yr)','fontweight','bold')
+ylim([0 350])
 % 
 % figure
 % plot(Age([Male Female]),mean(Tree([Male Female],:),2),'o','color',[0.9 0.447 0.041],'linewidth',2)
 % 
 % set(gca,'fontsize',20)
 % xlabel('Age (yr)')
-ylabel('Median Absolute Error (mm)','fontweight','bold')
 
 %% MR 20220802
 
-for ag = 5:10:35,
-    
-    group{ag} = subjsel(Age(subjsel)>=ag-1 & Age(subjsel)<ag+1);
-    
-end
+% for ag = 5:10:35,
+%     
+%     group{ag} = subjsel(Age(subjsel)>=ag-W & Age(subjsel)<ag+W);
+%     
+% end
 
 
 %%
 stat = [];
 nsubj = length(subjsel);
+M = E;
 for isubj = 1:nsubj,
     subj = subjsel(isubj);
     Mselected = M{subj}(M{subj}~=0 & abs(M{subj})<mean(abs(M{subj}(M{subj}~=0)))+3*std(abs(M{subj}(M{subj}~=0))))*1000*1.1;
     %     Mselected = M{subj}(M{subj}~=0 & abs(M{subj})<0.30)*1000*1.1;
-        Gselected = G{subj}(M{subj}~=0 & abs(M{subj})<mean(abs(M{subj}(M{subj}~=0)))+3*std(abs(M{subj}(M{subj}~=0))));
+%         Gselected = G{subj}(M{subj}~=0 & abs(M{subj})<mean(abs(M{subj}(M{subj}~=0)))+3*std(abs(M{subj}(M{subj}~=0))));
 
     nsel = length(Mselected);
     
-    if ismember(subj,group{8})
-        groupsel = 8;
-    elseif ismember(subj,group{10})
-        groupsel = 10;
-    elseif ismember(subj,group{12})
-        groupsel = 12;
+    if ismember(subj,group{5})
+        groupsel = 5;
+    elseif ismember(subj,group{15})
+        groupsel = 15;
+    elseif ismember(subj,group{25})
+        groupsel = 25;
+        elseif ismember(subj,group{35})
+        groupsel = 35;
     else
         groupsel = 0;
     end
@@ -193,7 +193,7 @@ for isubj = 1:nsubj,
     nrow = size(stat,1);
     
     end
-    stat([1:nsel]+nrow,:) = [abs(Mselected) Gselected ones(nsel,1)*Age(subj) ones(nsel,1)*subj ones(nsel,1)*groupsel];
+    stat([1:nsel]+nrow,:) = [abs(Mselected')  ones(nsel,1)*Age(subj) ones(nsel,1)*subj ones(nsel,1)*groupsel];
     
     
 end
@@ -201,5 +201,4 @@ end
 
 %%
 
-csvwrite(sprintf('mat_data_for_stat.csv'),stat)
-
+csvwrite(sprintf('mat_bouncing_museum_all_data_for_stat.csv'),stat)

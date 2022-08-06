@@ -66,15 +66,25 @@ AD = mERROR(Age>=18 & Age<22 & mERROR>0);
 
 W = 5;
 x = 0;
-xax = [7.5 15 25 60];
+% xax = [7.5 15 25 60];%MR20220721
+xax = [9 16 24 35];%MR20220721
 hold on
 subjsel = [ ]; %MR20220721
 
-for a = 5:10:35,
+ag = [9 16 24 35];%MR20220721
+% for a = 5:10:35,
+for a = ag,%MR20220721    
     x = x + 1;
 %     MALE = find(Age>a-W & Age<a+W & Gender=='M' & History_Mov=='N' & History_Psych=='N')';
 %     FEMALE = find(Age>a-W & Age<a+W & Gender=='F' & History_Mov=='N' & History_Psych=='N')';
     if a>5 & a<35,
+        if a < 15
+            W = 4;
+        elseif a < 24
+            W = 3;
+        elseif a < 35
+            W = 6;
+        end
         SUBJ = find(Age>=a-W & Age<a+W & mERROR>0 & Hist_Mov=='N' & Hist_Psych=='N');
         MALE = find(Gender == 'M' & Age>=a-W & Age<a+W & mERROR>0 & Hist_Mov=='N' & Hist_Psych=='N');
         FEMALE = find(Gender == 'F' & Age>=a-W & Age<a+W & mERROR>0 & Hist_Mov=='N' & Hist_Psych=='N');
@@ -119,7 +129,8 @@ tsmaF = tinv([0.025  0.975],length([FEMALE])-1);
 
 subjsel = [ subjsel SUBJ']; %MR20220721
 end
-p3 = plot([7.5 15 25 60],AGE(5:10:35),'-o','color',[0 0 0],'linewidth',3,'markersize',7,'markerfacecolor',[0 0 0]);
+ %MR20220721
+p3 = plot(xax,AGE(ag),'-o','color',[0 0 0],'linewidth',3,'markersize',7,'markerfacecolor',[0 0 0]);
 %CAT = [S{1};S{2};S{3};S{4}];
 %GROUP = [ones(length(S{1}),1); 2*ones(length(S{2}),1); 3*ones(length(S{3}),1); 4*ones(length(S{4}),1)];
 %[P,ANOVATAB,STATS] = kruskalwallis(mERROR(CAT),GROUP);
@@ -172,12 +183,12 @@ for isubj = 1:nsubj,
 
     nsel = length(Mselected);
     
-    if ismember(subj,group{5})
-        groupsel = 5;
-    elseif ismember(subj,group{15})
-        groupsel = 15;
-    elseif ismember(subj,group{25})
-        groupsel = 25;
+    if ismember(subj,group{9})
+        groupsel = 9;
+    elseif ismember(subj,group{16})
+        groupsel = 16;
+    elseif ismember(subj,group{24})
+        groupsel = 24;
         elseif ismember(subj,group{35})
         groupsel = 35;
     else
@@ -198,4 +209,4 @@ end
 
 %%
 
-csvwrite(sprintf('mat_pausing_museum_all_data_for_stat.csv'),stat)
+csvwrite(sprintf('mat_pausing_g2_museum_all_data_for_stat.csv'),stat)

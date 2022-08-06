@@ -12,7 +12,9 @@ load 3mouse_button_MoS
 load AgeGender449.mat
 W = 5;
 x = 0;
-xax = [7.5 15 25 60];
+% xax = [7.5 15 25 60];%MR20220721
+xax = [9 16 24 60];%MR20220721
+
 
 Male = find(Age>0 & Age<130 & Gender=='M' & Hist_Mov=='N' & Hist_Psych=='N')';
 Female = find(Age>0 & Age<130 & Gender=='F' & Hist_Mov=='N' & Hist_Psych=='N')';
@@ -45,14 +47,25 @@ p2 = plot(Age(Female),mERROR(Female),'o','color',lred,'markerfacecolor',lred,'li
 % plot([5:10:55]+0.2,AGEF(5:10:55),'-','color',[0.8500    0.3250    0.0980],'linewidth',3)
 
 AD = mERROR(Age>=18 & Age<22 & mERROR>0);
+subjsel = [ ]; %MR20220721
 
 hold on
-for a = 5:10:35,
+ag = [9 16 24 35];%MR20220721
+% for a = 5:10:35,
+for a = ag,%MR20220721
         x = x + 1;
 
 %     MALE = find(Age>a-W & Age<a+W & Gender=='M' & History_Mov=='N' & History_Psych=='N')';
 %     FEMALE = find(Age>a-W & Age<a+W & Gender=='F' & History_Mov=='N' & History_Psych=='N')';
-    if a<55,
+%     if a<55,
+if a<35,
+         if a < 15
+            W = 4;
+        elseif a < 24
+            W = 3;
+        elseif a < 35
+            W = 6;
+        end
         SUBJ = find(Age>=a-W & Age<a+W & mERROR>0 & Hist_Mov=='N' & Hist_Psych=='N');
         MALE = find(Gender == 'M' & Age>=a-W & Age<a+W & mERROR>0 & Hist_Mov=='N' & Hist_Psych=='N');
         FEMALE = find(Gender == 'F' & Age>=a-W & Age<a+W & mERROR>0 & Hist_Mov=='N' & Hist_Psych=='N');
@@ -83,10 +96,11 @@ for a = 5:10:35,
 
     line([xax(x) xax(x)],[AGEl(a) AGEu(a)],'color',[1 1 1]*0,'linewidth',3)
         group{a} = SUBJ; %MR20220802
-
+subjsel = [subjsel SUBJ']; %MR20220721
     
 end
-p3 = plot([7.5 15 25 60],AGE(5:10:35),'-o','color',[1 1 1]*0,'linewidth',3,'markersize',7,'markerfacecolor',[0 0 0]);
+%MR20220721
+p3 = plot(xax,AGE(ag),'-o','color',[1 1 1]*0,'linewidth',3,'markersize',7,'markerfacecolor',[0 0 0]);
 
 % p3 = plot([7.5 15 25 60]-0.4,AGEM(5:10:35),'-','color',[0 0 1],'linewidth',3);
 % p4 = plot([7.5 15 25 60]+0.4,AGEF(5:10:35),'-','color',[1 0 0],'linewidth',3);
@@ -132,12 +146,12 @@ for isubj = 1:nsubj,
 
     nsel = length(Mselected);
     
-    if ismember(subj,group{5})
-        groupsel = 5;
-    elseif ismember(subj,group{15})
-        groupsel = 15;
-    elseif ismember(subj,group{25})
-        groupsel = 25;
+    if ismember(subj,group{9})
+        groupsel = 9;
+    elseif ismember(subj,group{16})
+        groupsel = 16;
+    elseif ismember(subj,group{24})
+        groupsel = 24;
         elseif ismember(subj,group{35})
         groupsel = 35;
     else
@@ -158,5 +172,5 @@ end
 
 %%
 
-csvwrite(sprintf('mat_choosing_museum_all_data_for_stat.csv'),stat)
+csvwrite(sprintf('mat_choosing_g2_museum_all_data_for_stat.csv'),stat)
 
